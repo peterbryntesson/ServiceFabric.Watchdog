@@ -44,13 +44,13 @@ namespace WatchdogSampleService
                 // only applicable for applications with Watchdog in their name
                 RuleFilter = new StringExpression("Application == \'*Watchdog*\'"),
                 // action will trigger when Iterations are above 45
-                Expression = new IntExpression("Iterations > 45"),
+                TriggerExpression = new IntExpression("Iterations > 45"),
                 // We should aggretage data for the instances of the service
                 AggregateData = true,
                 // The expression need to trigger for 1 minute before action kicks in
                 TriggerPeriod = new TimeSpan(0, 1, 0),
                 // 2 minutes need to expire before the expression is considered again after an action has been done
-                GracePeriod = new TimeSpan(0, 2, 0),
+                TriggerGracePeriod = new TimeSpan(0, 2, 0),
                 // we want to scale the service up, 1 at the time until we have the service on all nodes in the cluster
                 TriggerAction = new ScaleStatelessServiceUpRuleAction()
                 {

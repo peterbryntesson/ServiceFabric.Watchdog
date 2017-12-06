@@ -11,9 +11,9 @@ namespace ServiceFabric.Watchdog.RuleEngine.Rules
     public class Rule
     {
         public StringExpression RuleFilter { get; set; }
-        public IntExpression Expression { get; set; }
+        public IntExpression TriggerExpression { get; set; }
         public TimeSpan TriggerPeriod { get; set; }
-        public TimeSpan GracePeriod { get; set; }
+        public TimeSpan TriggerGracePeriod { get; set; }
         public RuleAction TriggerAction { get; set; }
         public List<RuleActionItem> ActionHistory { get; } = new List<RuleActionItem>();
         public bool AggregateData { get; set; } = true;
@@ -29,7 +29,7 @@ namespace ServiceFabric.Watchdog.RuleEngine.Rules
             if (!triggerItems.Any())
                 return;
 
-            if (Expression == null)
+            if (TriggerExpression == null)
             {
                 defaultTriggerItem = triggerItems.First();
                 WatchdogEventSource.Current.RuleFired(this.ToString(defaultTriggerItem), defaultTriggerItem.ToString(), false);
@@ -60,7 +60,7 @@ namespace ServiceFabric.Watchdog.RuleEngine.Rules
 
             foreach (var filteredTriggerItem in filteredTriggerItems)
             {
-                if (Expression.Execute(filteredTriggerItem) != 0)
+                if (TriggerExpression.Execute(filteredTriggerItem) != 0)
                 {
                     if (_firstTriggered == null)
                         _firstTriggered = DateTime.UtcNow;
@@ -85,7 +85,7 @@ namespace ServiceFabric.Watchdog.RuleEngine.Rules
                 {
                     if (actionItem.TriggerItem.Application.Properties.ApplicationName == _triggeringItem.Application.Properties.ApplicationName &&
                         actionItem.TriggerItem.Service.Properties.ServiceName == _triggeringItem.Service.Properties.ServiceName &&
-                        (DateTime.UtcNow - GracePeriod) < actionItem.TimeTriggeredUtc)
+                        (DateTime.UtcNow - TriggerGracePeriod) < actionItem.TimeTriggeredUtc)
                         // we should do any new action yet - we have a grace period
                         return;
                 }
@@ -104,8 +104,8 @@ namespace ServiceFabric.Watchdog.RuleEngine.Rules
 
         public string ToString(TriggerItem triggerItem)
         {
-            return $"RuleFilter={RuleFilter.ToString(triggerItem)}; Expression={Expression.ToString(triggerItem)}; TriggerPeriod={TriggerPeriod.ToString()}; " +
-                $"GracePeriod={GracePeriod.ToString()}; Action={TriggerAction.GetType().FullName}";
+            return $"RuleFilter={RuleFilter.ToString(triggerItem)}; Expression={TriggerExpression.ToString(triggerItem)}; TriggerPeriod={TriggerPeriod.ToString()}; " +
+                $"GracePeriod={TriggerGracePeriod.ToString()}; Action={TriggerAction.GetType().FullName}";
         }
 
         private List<TriggerItem> CreateAggregatedData(List<TriggerItem> triggerItems)
