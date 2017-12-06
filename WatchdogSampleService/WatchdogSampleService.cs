@@ -50,7 +50,7 @@ namespace WatchdogSampleService
                 // The expression need to trigger for 1 minute before action kicks in
                 TriggerPeriod = new TimeSpan(0, 1, 0),
                 // 2 minutes need to expire before the expression is considered again after an action has been done
-                TriggerGracePeriod = new TimeSpan(0, 2, 0),
+                ActionGracePeriod = new TimeSpan(0, 2, 0),
                 // we want to scale the service up, 1 at the time until we have the service on all nodes in the cluster
                 TriggerAction = new ScaleStatelessServiceUpRuleAction()
                 {
@@ -66,10 +66,9 @@ namespace WatchdogSampleService
             {
                 while (true)
                 {
+                    // just to keep the loop running
                     cancellationToken.ThrowIfCancellationRequested();
-
-                    // now, how to work with this metrics.
-                    await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
+                    await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
                 }
             }
             catch (Exception)
