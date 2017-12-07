@@ -142,7 +142,7 @@ namespace ServiceFabric.Watchdog
         [Event(ActionFiredId, Level = EventLevel.Informational, Message = "Action {0} fired for rule {1} with trigger item {2}", Keywords = Keywords.Actions)]
         public void ActionFired(string action, string rule, string triggerItem)
         {
-            WriteEvent(RuleFiredId, action, rule, triggerItem);
+            WriteEvent(ActionFiredId, action, rule, triggerItem);
         }
         #endregion
 
