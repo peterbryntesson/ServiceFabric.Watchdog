@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ServiceFabric.Metrics
+﻿namespace ServiceFabric.Metrics
 {
     public class HighValueMetric : MetricBase
     {
