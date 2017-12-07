@@ -60,7 +60,7 @@ The first thing you have to do is emit custom metrics. In the **ServiceFabric.Wa
 
 Now, in addition to this we need to specify load metrics when we create the service. You can do this in many ways depending on how you create the service - I do it through the [Service Fabric Explorer UI](http://localhost:19080). On the *MetricsBuilderSample* Service Type, press **Create** and specify the metrics like this:
 
-![Create Service with load metrics](https://github.com/peterbryntesson/ServiceFabric.Watchdog/master/blob/CreateService,png "Create Service with load metrics")
+![Create Service with load metrics](https://github.com/peterbryntesson/ServiceFabric.Watchdog/blob/master/CreateService,png "Create Service with load metrics")
 
 ## Creating the watchdog
 Ok, we emit the metrics we want. Now we want to monitor them and take actions on them as well. For that we use the *RuleWatchdog* class and add rules to it. The properties in the *Rule* class are:
