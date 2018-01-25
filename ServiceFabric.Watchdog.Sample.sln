@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsBuilderSampleService
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchdogSampleService", "WatchdogSampleService\WatchdogSampleService.csproj", "{FBF4F889-E94F-4AAB-B0E5-2480491B1C60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchdogStatefulSampleService", "WatchdogStatefulSampleService\WatchdogStatefulSampleService.csproj", "{B062E381-46B4-4395-AAF9-7BC8BAD2AB49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,12 @@ Global
 		{FBF4F889-E94F-4AAB-B0E5-2480491B1C60}.Release|Any CPU.ActiveCfg = Release|x64
 		{FBF4F889-E94F-4AAB-B0E5-2480491B1C60}.Release|x64.ActiveCfg = Release|x64
 		{FBF4F889-E94F-4AAB-B0E5-2480491B1C60}.Release|x64.Build.0 = Release|x64
+		{B062E381-46B4-4395-AAF9-7BC8BAD2AB49}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{B062E381-46B4-4395-AAF9-7BC8BAD2AB49}.Debug|x64.ActiveCfg = Debug|x64
+		{B062E381-46B4-4395-AAF9-7BC8BAD2AB49}.Debug|x64.Build.0 = Debug|x64
+		{B062E381-46B4-4395-AAF9-7BC8BAD2AB49}.Release|Any CPU.ActiveCfg = Release|x64
+		{B062E381-46B4-4395-AAF9-7BC8BAD2AB49}.Release|x64.ActiveCfg = Release|x64
+		{B062E381-46B4-4395-AAF9-7BC8BAD2AB49}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +75,7 @@ Global
 		{257E5410-5741-4398-945F-9554EEDE2AA3} = {B3AD4680-FFB0-4563-944B-A26F8996F296}
 		{13341CA1-128B-4BC6-87C6-B919FE9571DC} = {B3AD4680-FFB0-4563-944B-A26F8996F296}
 		{FBF4F889-E94F-4AAB-B0E5-2480491B1C60} = {B3AD4680-FFB0-4563-944B-A26F8996F296}
+		{B062E381-46B4-4395-AAF9-7BC8BAD2AB49} = {B3AD4680-FFB0-4563-944B-A26F8996F296}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00017723-E0B2-4D28-A2BB-C1D6A5C1D2AE}

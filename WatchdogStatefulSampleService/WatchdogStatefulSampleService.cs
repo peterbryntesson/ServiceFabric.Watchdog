@@ -4,41 +4,49 @@ using System.Fabric;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using ServiceFabric.Watchdog;
 using ServiceFabric.Watchdog.RuleEngine.Rules;
-using ServiceFabric.Watchdog.RuleEngine.Expressions;
 using ServiceFabric.Watchdog.RuleEngine.Actions;
 
-namespace WatchdogSampleService
+namespace WatchdogStatefulSampleService
 {
     /// <summary>
-    /// An instance of this class is created for each service instance by the Service Fabric runtime.
+    /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class WatchdogSampleService : StatelessService
+    internal sealed class WatchdogStatefulSampleService : StatefulService
     {
-        public WatchdogSampleService(StatelessServiceContext context)
+        public WatchdogStatefulSampleService(StatefulServiceContext context)
             : base(context)
         { }
 
         /// <summary>
-        /// Optional override to create listeners (e.g., TCP, HTTP) for this service replica to handle client or user requests.
+        /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
         /// </summary>
+        /// <remarks>
+        /// For more information on service communication, see https://aka.ms/servicefabricservicecommunication
+        /// </remarks>
         /// <returns>A collection of listeners.</returns>
-        protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
+        protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new ServiceInstanceListener[0];
+            return new ServiceReplicaListener[0];
         }
 
         /// <summary>
-        /// This is the main entry point for your service instance.
+        /// This is the main entry point for your service replica.
+        /// This method executes when this replica of your service becomes primary and has write status.
         /// </summary>
-        /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service instance.</param>
+        /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service replica.</param>
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
             // create the watchdog and create our sample rule
-            var ruleWatchdog = new RuleWatchdog();
+            var ruleWatchdog = new RuleWatchdog(StateManager);
+            await ruleWatchdog.Load();
+
+            // NOTE: Since this is a stateful service, it will reload rules from reliable storage
+            // this code only has to run once. Keeping it here for this example though
             await ruleWatchdog.AddRule(new Rule()
             {
                 Name = "IterationCount",
@@ -60,6 +68,8 @@ namespace WatchdogSampleService
                     ScaleDeltaNumInstances = 1
                 }
             });
+            // END NOTE
+
             // start the watchdog and check the rules every 10 seconds
             ruleWatchdog.Start(new TimeSpan(0, 0, 10));
 

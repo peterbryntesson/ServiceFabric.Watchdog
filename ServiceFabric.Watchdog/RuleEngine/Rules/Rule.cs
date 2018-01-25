@@ -5,17 +5,50 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace ServiceFabric.Watchdog.RuleEngine.Rules
 {
+    [DataContract]
     public class Rule
     {
-        public StringExpression RuleFilter { get; set; }
-        public IntExpression TriggerExpression { get; set; }
+        private StringExpression _ruleFilter;
+        private IntExpression _triggerExpression;
+
+        [DataMember]
+        public string Name { get; set; }
+        [DataMember]
+        public string RuleFilter
+        {
+            get
+            {
+                return (_ruleFilter != null ? _ruleFilter.ToString() : null);
+            }
+            set
+            {
+                _ruleFilter = new StringExpression(value);
+            }
+        }
+        [DataMember]
+        public string TriggerExpression
+        {
+            get
+            {
+                return (_triggerExpression != null ? _triggerExpression.ToString() : null);
+            }
+            set
+            {
+                _triggerExpression = new IntExpression(value);
+            }
+        }
+        [DataMember]
         public TimeSpan TriggerPeriod { get; set; }
+        [DataMember]
         public TimeSpan ActionGracePeriod { get; set; }
+        [DataMember]
         public RuleAction TriggerAction { get; set; }
         public List<RuleActionItem> ActionHistory { get; } = new List<RuleActionItem>();
+        [DataMember]
         public bool AggregateData { get; set; } = true;
 
         private DateTime? _firstTriggered;
@@ -40,7 +73,7 @@ namespace ServiceFabric.Watchdog.RuleEngine.Rules
             {
                 foreach (var triggerItem in triggerItems)
                 {
-                    var result = (RuleFilter.Execute(triggerItem) == "1" ? true : false);
+                    var result = (_ruleFilter.Execute(triggerItem) == "1" ? true : false);
                     if (result)
                         filteredTriggerItems.Add(triggerItem);
                 }
@@ -60,7 +93,7 @@ namespace ServiceFabric.Watchdog.RuleEngine.Rules
 
             foreach (var filteredTriggerItem in filteredTriggerItems)
             {
-                if (TriggerExpression.Execute(filteredTriggerItem) != 0)
+                if (_triggerExpression.Execute(filteredTriggerItem) != 0)
                 {
                     if (_firstTriggered == null)
                         _firstTriggered = DateTime.UtcNow;
@@ -104,7 +137,7 @@ namespace ServiceFabric.Watchdog.RuleEngine.Rules
 
         public string ToString(TriggerItem triggerItem)
         {
-            return $"RuleFilter={RuleFilter.ToString(triggerItem)}; Expression={TriggerExpression.ToString(triggerItem)}; TriggerPeriod={TriggerPeriod.ToString()}; " +
+            return $"RuleFilter={_ruleFilter.ToString(triggerItem)}; Expression={_triggerExpression.ToString(triggerItem)}; TriggerPeriod={TriggerPeriod.ToString()}; " +
                 $"GracePeriod={ActionGracePeriod.ToString()}; Action={TriggerAction.GetType().FullName}";
         }
 
