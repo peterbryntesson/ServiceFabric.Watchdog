@@ -82,51 +82,48 @@ Ok, we emit the metrics we want. Now we want to monitor them and take actions on
 
 Putting it together, here is the code in **WatchdogSampleService** that set up the rule and starts the *RuleWatchdog* instance:
 
-    ```csharp
-    protected override async Task RunAsync(CancellationToken cancellationToken)
+```csharp
+protected override async Task RunAsync(CancellationToken cancellationToken)
+{
+    // create the watchdog and create our sample rule
+    var ruleWatchdog = new RuleWatchdog();
+    ruleWatchdog.Rules.Add(new Rule()
     {
-        // create the watchdog and create our sample rule
-        var ruleWatchdog = new RuleWatchdog();
-        ruleWatchdog.Rules.Add(new Rule()
+        // only applicable for applications with Watchdog in their name
+        RuleFilter = new StringExpression("Application == \'*Watchdog*\'"),
+        // action will trigger when Iterations are above 45
+        TriggerExpression = new IntExpression("Iterations > 45"),
+        // We should aggretage data for the instances of the service
+        AggregateData = true,
+        // The expression need to trigger for 1 minute before action kicks in
+        TriggerPeriod = new TimeSpan(0, 1, 0),
+        // 2 minutes need to expire before the expression is considered again after an action has been done
+        ActionGracePeriod = new TimeSpan(0, 2, 0),
+        // we want to scale the service up, 1 at the time until we have the service on all nodes in the cluster
+        TriggerAction = new ScaleStatelessServiceUpRuleAction()
         {
-            // only applicable for applications with Watchdog in their name
-            RuleFilter = new StringExpression("Application == \'*Watchdog*\'"),
-            // action will trigger when Iterations are above 45
-            TriggerExpression = new IntExpression("Iterations > 45"),
-            // We should aggretage data for the instances of the service
-            AggregateData = true,
-            // The expression need to trigger for 1 minute before action kicks in
-            TriggerPeriod = new TimeSpan(0, 1, 0),
-            // 2 minutes need to expire before the expression is considered again after an action has been done
-            ActionGracePeriod = new TimeSpan(0, 2, 0),
-            // we want to scale the service up, 1 at the time until we have the service on all nodes in the cluster
-            TriggerAction = new ScaleStatelessServiceUpRuleAction()
-            {
-                MaxNumInstances = -1,
-                MinNumInstances = 1,
-                ScaleDeltaNumInstances = 1
-            }
-        });
-        // start the watchdog and check the rules every 10 seconds
-        ruleWatchdog.Start(new TimeSpan(0, 0, 10));
-
-        try
-        {
-            while (true)
-            {
-                // just to keep the loop running
-                cancellationToken.ThrowIfCancellationRequested();
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-            }
+            MaxNumInstances = -1,
+            MinNumInstances = 1,
+            ScaleDeltaNumInstances = 1
         }
-        catch (Exception)
+    });
+    // start the watchdog and check the rules every 10 seconds
+    ruleWatchdog.Start(new TimeSpan(0, 0, 10));
+
+    try
+    {
+        while (true)
         {
-            ruleWatchdog.Stop();
+            // just to keep the loop running
+            cancellationToken.ThrowIfCancellationRequested();
+            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
         }
     }
-    ```
+    catch (Exception)
+    {
+        ruleWatchdog.Stop();
+    }
+}
+```
 
 That's it! Test out the sample, implement it in your own solution and improve it by doing a pull request!
-
-
-
