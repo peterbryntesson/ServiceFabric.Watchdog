@@ -2,6 +2,7 @@
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ServiceFabricWatchdogSampleType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="WatchdogSampleService_InstanceCount" DefaultValue="1" />
+    <Parameter Name="MetricsBuilderSampleService_InstanceCount" DefaultValue="-1" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -22,6 +23,11 @@
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
     <Service Name="WatchdogSampleService" ServicePackageActivationMode="ExclusiveProcess">
       <StatelessService ServiceTypeName="WatchdogSampleServiceType" InstanceCount="[WatchdogSampleService_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="MetricsBuilderSampleService" ServicePackageActivationMode="ExclusiveProcess">
+      <StatelessService ServiceTypeName="MetricsBuilderSampleServiceType" InstanceCount="[MetricsBuilderSampleService_InstanceCount]">
         <SingletonPartition />
       </StatelessService>
     </Service>
